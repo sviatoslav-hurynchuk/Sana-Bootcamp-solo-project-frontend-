@@ -22,8 +22,6 @@ export const TaskList = ({ tasks, source, categories }: Props) => {
             return dateB - dateA;
         });
 
-
-
     const handleComplete = async (taskId: number) => {
         const success = await completeTask(taskId, source);
         if (success) {
@@ -36,78 +34,132 @@ export const TaskList = ({ tasks, source, categories }: Props) => {
                             ? {
                                 ...t,
                                 isCompleted: true,
-                                completedAt: now, // ← ДОДАЙ ЦЕ
+                                completedAt: now,
                             }
                             : t
                     )
                 )
             );
         } else {
-            alert("Помилка при завершенні задачі");
+            alert("Error completing task");
         }
     };
 
-
     return (
         <>
-            <h4 className="text-success mb-3">Активні завдання</h4>
-            <table className="table table-hover table-bordered">
-                <thead>
-                <tr>
-                    <th>Текст</th>
-                    <th>Дедлайн</th>
-                    <th>Категорія</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {activeTasks.map((task) => (
-                    <tr key={task.id}>
-                        <td>{task.text}</td>
-                        <td>{task.dueDate?.slice(0, 10)}</td>
-                        <td>
-                            {categories.find((c) => c.id === task.categoryId)?.name ??
-                                "Без категорії"}
-                        </td>
-                        <td>
-                            <button
-                                className="btn btn-sm btn-outline-success"
-                                onClick={() => handleComplete(task.id)}
-                            >
-                                ✓
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            {/* Active Tasks Section */}
+            <div className="table-container slide-in">
+                <h3 className="section-header active">
+                    <span className="task-status active"></span>
+                    Active Tasks ({activeTasks.length})
+                </h3>
+                
+                {activeTasks.length === 0 ? (
+                    <div className="empty-state">
+                        <i className="fas fa-check-circle fa-2x"></i>
+                        <p>No active tasks. Great job!</p>
+                    </div>
+                ) : (
+                    <div className="table-responsive">
+                        <table className="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Due Date</th>
+                                    <th>Category</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {activeTasks.map((task) => (
+                                    <tr key={task.id} className="fade-in">
+                                        <td>
+                                            <strong>{task.text}</strong>
+                                        </td>
+                                        <td>
+                                            {task.dueDate ? (
+                                                <span className="badge bg-info">
+                                                    {task.dueDate.slice(0, 10)}
+                                                </span>
+                                            ) : (
+                                                <span className="text-muted">No due date</span>
+                                            )}
+                                        </td>
+                                        <td>
+                                            <span className="badge bg-secondary">
+                                                {categories.find((c) => c.id === task.categoryId)?.name ?? "No category"}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="btn btn-outline-success"
+                                                onClick={() => handleComplete(task.id)}
+                                                title="Mark as completed"
+                                            >
+                                                <i className="fas fa-check"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
 
-            <h4 className="text-muted mt-5 mb-3">Виконані завдання</h4>
-            <table className="table table-bordered text-muted">
-                <thead>
-                <tr>
-                    <th>Текст</th>
-                    <th>Дедлайн</th>
-                    <th>Категорія</th>
-                </tr>
-                </thead>
-                <tbody>
-                {completedTasks
-                    .map(({ id, text, dueDate, categoryId }) => {
-                    const categoryName =
-                        categories.find((c) => c.id === categoryId)?.name || "Без категорії";
+            {/* Completed Tasks Section */}
+            {completedTasks.length > 0 && (
+                <div className="table-container slide-in">
+                    <h3 className="section-header completed">
+                        <span className="task-status completed"></span>
+                        Completed Tasks ({completedTasks.length})
+                    </h3>
+                    
+                    <div className="table-responsive">
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Due Date</th>
+                                    <th>Category</th>
+                                    <th>Completed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {completedTasks.map(({ id, text, dueDate, categoryId, completedAt }) => {
+                                    const categoryName =
+                                        categories.find((c) => c.id === categoryId)?.name || "No category";
 
-                    return (
-                        <tr key={id} className="text-decoration-line-through">
-                            <td>{text}</td>
-                            <td>{dueDate?.slice(0, 10)}</td>
-                            <td>{categoryName}</td>
-                        </tr>
-                    );
-                })}
-                </tbody>
-
-            </table>
+                                    return (
+                                        <tr key={id} className="text-decoration-line-through fade-in">
+                                            <td className="text-muted">{text}</td>
+                                            <td>
+                                                {dueDate ? (
+                                                    <span className="badge bg-light">
+                                                        {dueDate.slice(0, 10)}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-muted">No due date</span>
+                                                )}
+                                            </td>
+                                            <td>
+                                                <span className="badge bg-light">
+                                                    {categoryName}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small className="text-muted">
+                                                    {completedAt ? new Date(completedAt).toLocaleDateString() : 'Unknown'}
+                                                </small>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
         </>
     );
 };

@@ -30,36 +30,52 @@ export const TaskForm = ({ source, categories }: Props) => {
         setCategoryId("");
     };
 
-
     return (
-        <form onSubmit={handleSubmit} className="mb-5 card-form">
-            <div className="mb-3">
+        <form onSubmit={handleSubmit} className="card-form slide-in">
+            <h3 className="section-header active mb-4">
+                <i className="fas fa-plus-circle me-2"></i>
+                Create New Task
+            </h3>
+            
+            <div className="mb-4">
+                <label htmlFor="task-text" className="form-label">
+                    Task Description
+                </label>
                 <input
+                    id="task-text"
                     type="text"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     className="form-control"
-                    placeholder="Введіть текст завдання"
+                    placeholder="Enter your task description here..."
                     required
                 />
             </div>
 
-            <div className="row g-2 align-items-end">
-                <div className="col-md-4">
+            <div className="form-row">
+                <div className="form-group">
+                    <label htmlFor="task-date" className="form-label">
+                        Due Date
+                    </label>
                     <input
+                        id="task-date"
                         type="date"
                         value={dueDate}
                         onChange={(e) => setDueDate(e.target.value)}
                         className="form-control"
                     />
                 </div>
-                <div className="col-md-5">
+                <div className="form-group">
+                    <label htmlFor="task-category" className="form-label">
+                        Category
+                    </label>
                     <select
+                        id="task-category"
                         value={categoryId}
                         onChange={(e) => setCategoryId(e.target.value)}
                         className="form-control"
                     >
-                        <option value="">Оберіть категорію</option>
+                        <option value="">Select a category</option>
                         {categories.map((cat) => (
                             <option key={cat.id} value={cat.id}>
                                 {cat.name}
@@ -67,9 +83,10 @@ export const TaskForm = ({ source, categories }: Props) => {
                         ))}
                     </select>
                 </div>
-                <div className="col-md-3 text-end">
-                    <button type="submit" className="btn btn-primary w-100">
-                        Створити
+                <div className="form-group">
+                    <button type="submit" className="btn btn-primary">
+                        <i className="fas fa-plus me-2"></i>
+                        Create Task
                     </button>
                 </div>
             </div>

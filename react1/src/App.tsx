@@ -8,7 +8,6 @@ import type { Category } from "./types/models";
 import { TaskForm } from "./components/TaskForm";
 import { TaskList } from "./components/TaskList";
 import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function App() {
     const dispatch = useDispatch();
@@ -18,24 +17,29 @@ export default function App() {
 
     useEffect(() => {
         fetchTasks(source).then((tasks) => dispatch(setTasks(tasks)));
-
         fetchCategories(source).then((cats) => setCategories(cats));
     }, [dispatch, source]);
 
     return (
-        <div className="container">
-            <h2 className="mb-4 text-center text-primary">ToDo List</h2>
-
-            <div className="text-end mb-3">
-                <select
-                    value={source}
-                    onChange={(e) => setSource(e.target.value as "sql" | "xml")}
-                    className="form-select form-select-sm w-auto d-inline"
-                >
-                    <option value="sql">SQL</option>
-                    <option value="xml">XML</option>
-                </select>
-            </div>
+        <div className="container fade-in">
+            <header className="app-header">
+                <h1 className="app-title">ToDo List</h1>
+                
+                <div className="source-selector">
+                    <label htmlFor="source-select" className="form-label">
+                        Data Source:
+                    </label>
+                    <select
+                        id="source-select"
+                        value={source}
+                        onChange={(e) => setSource(e.target.value as "sql" | "xml")}
+                        className="form-select"
+                    >
+                        <option value="sql">SQL Database</option>
+                        <option value="xml">XML File</option>
+                    </select>
+                </div>
+            </header>
 
             <TaskForm source={source} categories={categories} />
             <TaskList tasks={allTasks} source={source} categories={categories} />
